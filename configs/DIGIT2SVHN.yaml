@@ -1,0 +1,28 @@
+lambda_ent: 0.1
+lambda_src_joint: 1.0
+lambda_trg_joint: 1.0
+lambda_src_feat_adv: 0.0001
+lambda_trg_feat_adv: 0.0001
+lambda_src_vat: 1.0
+lambda_trg_vat: 1.0
+lambda_consis_src: 1.0
+lambda_consis_trg: 0.0
+
+eps_vat: 1.0
+std: 0.0
+nb_jc: 1
+nb_cc: 1
+nb_e: 1
+
+net_name: conv_large
+lr_scheme: SGD
+max_lr: 0.1
+drop_prob: 0.5
+
+instance_norm: False
+is_bn: True
+is_curriculum: False
+
+b_source: 64
+b_target: 64
+num_epochs: 150
