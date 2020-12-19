@@ -1,6 +1,6 @@
 ## Unsupervised Domain Adaptation via Regularized Conditional Alignment
 
-This repository implements the algorithm proposed in Unsupervised Domain Adaptation via Regularized Conditional Alignment,  ICCV (2019) using PyTorch.
+This repository implements the algorithm proposed in Unsupervised Domain Adaptation via Regularized Conditional Alignment, ICCV (2019) using PyTorch.
 
 ![Image](figure.png)
 
@@ -16,10 +16,10 @@ torchvision 0.5.0
 
 Also, install the following packages:
 ```
-pip install scikit-image
-python3.6 -m pip install googledrivedownloader
-pip install requests
-python3.6 -m pip install PyYAML
+scikit-image
+googledrivedownloader
+requests
+PyYAML
 ```
 
 ## Training
