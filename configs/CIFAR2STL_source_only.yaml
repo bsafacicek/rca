@@ -1,0 +1,17 @@
+std: 0.0
+nb_jc: 1
+nb_cc: 1
+nb_e: 1
+
+net_name: conv_large
+lr_scheme: SGD
+max_lr: 0.2
+drop_prob: 0.5
+
+instance_norm: False
+is_bn: True
+is_curriculum: False
+
+b_source: 100
+b_target: 100
+num_epochs: 150

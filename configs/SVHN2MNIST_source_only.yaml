@@ -1,0 +1,17 @@
+std: 0.0
+nb_jc: 1
+nb_cc: 1
+nb_e: 1
+
+net_name: small_cnn
+lr_scheme: ADAM
+max_lr: 0.001
+drop_prob: 0.05
+
+instance_norm: True
+is_bn: True
+is_curriculum: False
+
+b_source: 100
+b_target: 100
+num_epochs: 150

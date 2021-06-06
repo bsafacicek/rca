@@ -39,5 +39,10 @@ You can choose the source and the target dataset and run train.py:
 
 ```python3 train.py --source_dataset=MNIST28 --target_dataset=MNISTM28```
 
+If you want to run the source-only training, use `--source_only_train` flag.
+For instance,
+
+```python3 train.py --source_dataset=CIFAR --target_dataset=STL --source_only_train```
+
 ## Contact
 safacicek@gmail.com

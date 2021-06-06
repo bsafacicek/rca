@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.init as init
 
+
 def init_params(net):
     for m in net.modules():
         if isinstance(m, nn.Conv2d):
@@ -21,6 +22,7 @@ def init_params(net):
             init.kaiming_normal_(m.weight, a=0, mode='fan_in')
             init.constant_(m.bias, 0)
 
+
 def load_net(config):
     if config['net_name'] == "small_cnn":
         from networks import small_cnn
@@ -33,6 +35,7 @@ def load_net(config):
         init_params(net)
     return net
 
+
 def log(text, log_file):
     print(text)
     if log_file is not None:
@@ -40,6 +43,7 @@ def log(text, log_file):
             f.write(text + '\n')
             f.flush()
             f.close()
+
 
 def log_losses(config, epoch, lr, st_time):
     log("epoch=%d/%d,lr=%f,time=%d" % (epoch+1, config["num_epochs"], lr, time.time()-st_time), config['out_path'])
@@ -52,6 +56,14 @@ def log_losses(config, epoch, lr, st_time):
 
     log("acc_source_class_valid=%.3f,acc_source_joint_valid=%.3f" % (config['acc_source_class_valid'],config['acc_source_joint_valid']), config['out_path'])
     log("acc_target_class_valid=%.3f,acc_target_joint_valid=%.3f" % (config['acc_target_class_valid'],config['acc_target_joint_valid']), config['out_path'])
+
+
+def log_losses_source_only(config, epoch, lr, st_time):
+    log('epoch=%d/%d,lr=%f,time=%d' % (epoch+1, config['num_epochs'], lr, time.time()-st_time), config['out_path'])
+    log('loss_ce=%.3f,acc_source_train=%.3f' % (config['loss_ce'], config['acc_source_train']), config['out_path'])
+    log('acc_source_class_valid=%.3f' % (config['acc_source_class_valid']), config['out_path'])
+    log("acc_target_class_valid=%.3f" % (config['acc_target_class_valid']), config['out_path'])
+
 
 def lambda_schedule(config, config_init, epoch):
     # reset lambda values:
@@ -82,6 +94,7 @@ def lambda_schedule(config, config_init, epoch):
 
     return config
 
+
 class torch_optimizer(nn.Module):
     def __init__(self, config, net, is_encoder):
         self.lr_scheme = config["lr_scheme"]
@@ -95,6 +108,7 @@ class torch_optimizer(nn.Module):
         elif self.lr_scheme == "ADAM":
             self.optimizer = optim.Adam([{'params': net.parameters()}], lr=self.max_lr,
                                         betas=(0.9, 0.999), eps=1e-08, weight_decay=10**-4)
+
 
     def update_lr(self, epoch):
         if self.lr_scheme == "SGD":
@@ -126,6 +140,7 @@ class torch_optimizer(nn.Module):
 
         return lr, self.optimizer
 
+
 def get_config(config):
     with open(config, 'r') as stream:
         config = yaml.load(stream)
@@ -139,6 +154,7 @@ def get_config(config):
 
     return config
 
+
 def get_run_id(out_dir):
     dir_names = os.listdir(out_dir)
     r = re.compile("^\\d+")
@@ -149,6 +165,7 @@ def get_run_id(out_dir):
             i = int(m.group())
             run = max(run, i + 1)
     return run
+
 
 def copy_src_files(out_name):
     directory = 'src/' + out_name + "/"
@@ -161,4 +178,3 @@ def copy_src_files(out_name):
 
     source = "configs/"
     shutil.copytree(source, directory + source)
-

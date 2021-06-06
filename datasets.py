@@ -14,11 +14,15 @@ import torchvision.transforms as transforms
 from torchvision.datasets import SVHN, MNIST, STL10
 from torch.utils.data import DataLoader
 
+DATA_DIR = "data/"
+
+
 def resize_imgs(x, out_len):
     x_resized = np.zeros((len(x), out_len, out_len))
     for i in range(len(x)):
         x_resized[i,:,:] = scipy.misc.imresize(x[i,:,:], (out_len, out_len), interp='bilinear')
     return x_resized
+
 
 def convert_svhn_images(svhn_images, small_H=28):
     big_H = svhn_images.shape[2]
@@ -33,6 +37,7 @@ def convert_svhn_images(svhn_images, small_H=28):
 
     return FloatTensor(svhn_images_small)
 
+
 def convert_mnist_images(mnist_images, big_H=32): #  N, 1, 28, 28 -> N, 3, 32, 32
     small_H = mnist_images.size(2)
     mnist_images_big = np.zeros((mnist_images.size(0), 3, big_H, big_H), dtype=np.uint8)
@@ -45,6 +50,7 @@ def convert_mnist_images(mnist_images, big_H=32): #  N, 1, 28, 28 -> N, 3, 32, 3
 
     return mnist_images_big
 
+
 def convert_mnist_images_torgb(mnist_images): #  N, 1, 28, 28 -> N, 3, 32, 32
     mnist_images_big = np.zeros((mnist_images.size(0), 3, 28, 28), dtype=np.uint8)
 
@@ -54,6 +60,7 @@ def convert_mnist_images_torgb(mnist_images): #  N, 1, 28, 28 -> N, 3, 32, 32
     mnist_images_big[:, 2, :, :] = mnist_images.squeeze()
 
     return mnist_images_big
+
 
 def augment_mnist_rgb(is_crop=False, is_flip=False, brightness=0, contrast=0,
                       saturation=0, hue=0):
@@ -73,6 +80,7 @@ def augment_mnist_rgb(is_crop=False, is_flip=False, brightness=0, contrast=0,
     transform_train = transforms.Compose(transform_train)
     return transform_train
 
+
 def no_augment_mnist_rgb():
     transform_train = transforms.Compose([
         transforms.ToTensor(),
@@ -80,11 +88,13 @@ def no_augment_mnist_rgb():
     ])
     return transform_train
 
+
 def no_augment_mnist_gray():
     transform_train = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.,), (1.,)),])
     return transform_train
+
 
 def get_loader_mnist_rgb(batchsize):
     transform_train = augment_mnist_rgb()
@@ -153,6 +163,7 @@ def get_loader_mnist_rgb_28(batchsize):
 
     return trainloader, testloader
 
+
 def get_loader_svhn_rgb(batchsize):
     transform_train = augment_mnist_rgb()
 
@@ -168,6 +179,7 @@ def get_loader_svhn_rgb(batchsize):
     print("SVHN test min=%f, max=%f" % (testset.data.min(), testset.data.max()))
 
     return trainloader, testloader
+
 
 def get_loader_digit_rgb(batchsize):
     transform_train = no_augment_mnist_rgb()
@@ -213,6 +225,7 @@ def get_loader_digit_rgb(batchsize):
 
     return trainloader, testloader
 
+
 def get_loader_mnist_gray(batchsize):
     transform_train = no_augment_mnist_rgb()
     trainset = MNIST(root='./data', train=True, download=True, transform=transform_train)
@@ -230,6 +243,7 @@ def get_loader_mnist_gray(batchsize):
 
     return trainloader, testloader
 
+
 class CIFAR10(torchvision.datasets.CIFAR10):
     def __len__(self):
         if self.train:
@@ -237,12 +251,14 @@ class CIFAR10(torchvision.datasets.CIFAR10):
         else:
             return len(self.data)
 
+
 def noaug_cifar():
     transform_train = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.0, 0.0, 0.0), (1.0, 1.0, 1.0)),
     ])
     return transform_train
+
 
 def get_loader_CIFAR(batchsize):
     transform_train = noaug_cifar()
@@ -281,6 +297,7 @@ def get_loader_CIFAR(batchsize):
     print("CIFAR test min=%f, max=%f" % (testset.data.min(), testset.data.max()))
 
     return trainloader, testloader
+
 
 def get_loader_STL(batchsize):
     transform_train = noaug_cifar()
@@ -329,7 +346,7 @@ def get_loader_STL(batchsize):
 
     return trainloader, testloader
 
-DATA_DIR = "data/"
+
 class BSDS500(Dataset):
     """
     https://github.com/jvanvugt/pytorch-domain-adaptation/blob/cb65581f20b71ff9883dd2435b2275a1fd4b90df/data.py
@@ -354,6 +371,7 @@ class BSDS500(Dataset):
 
     def __len__(self):
         return len(self.image_files)
+
 
 class MNISTM(Dataset):
 
@@ -384,6 +402,7 @@ class MNISTM(Dataset):
     def __len__(self):
         return len(self.mnist)
 
+
 def get_loader_mnistm_rgb_28(batchsize):
     trainset = MNISTM(train=False, transform=no_augment_mnist_gray())
 
@@ -391,6 +410,7 @@ def get_loader_mnistm_rgb_28(batchsize):
     testloader = DataLoader(trainset, batch_size=batchsize, shuffle=False, num_workers=0)
 
     return trainloader, testloader
+
 
 def load_datasets(config):
     b_source = config['b_source']
@@ -412,6 +432,8 @@ def load_datasets(config):
         trainloader_source, testloader_source = get_loader_mnistm_rgb_28(b_source)
     elif source_dataset == 'DIGIT':
         trainloader_source, testloader_source = get_loader_digit_rgb(b_source)
+    else:
+        raise NotImplementedError
 
     if target_dataset == 'MNIST':
         trainloader_target, testloader_target = get_loader_mnist_rgb(b_target)

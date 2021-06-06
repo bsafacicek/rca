@@ -1,7 +1,9 @@
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.cuda import FloatTensor
+
 import numpy as np
+
 
 def update_layer(layer, requires_grad):
     for param in layer.parameters():
@@ -9,12 +11,14 @@ def update_layer(layer, requires_grad):
 
     return layer
 
+
 def average_preds(x, nets):
     y = 0
     for i in range(len((nets))):
         y += nets[i](x).data
     y /= (i+1.0)
     return Variable(y)
+
 
 def forward_(self, x, state = "test"):
     assert(state in ["test", "all", "only_joint", "encoder"])
@@ -51,6 +55,7 @@ def forward_(self, x, state = "test"):
 
     return class_prob, joint_prob
 
+
 class large_joint_classifier(nn.Module):
     def __init__(self, config, is_drop=False, is_bn_aff=True):
         super(large_joint_classifier, self).__init__()
@@ -63,6 +68,7 @@ class large_joint_classifier(nn.Module):
         x = self.linears(x)
         return x
 
+
 class large_class_classifier(nn.Module):
     def __init__(self, config, is_drop=False, is_bn_aff=True):
         super(large_class_classifier, self).__init__()
@@ -74,6 +80,7 @@ class large_class_classifier(nn.Module):
             x = self.drop(x)
         x = self.linears(x)
         return x
+
 
 class large_encoder(nn.Module):
     def __init__(self, config, in_ch=3, cnn_bias=True, mom_bn=0.1, bn_eps=10**-5, is_bn_aff=True):
@@ -173,6 +180,7 @@ class large_encoder(nn.Module):
 
         return x
 
+
 class conv_large(nn.Module):
     def __init__(self, config, in_ch=3, cnn_bias=True, mom_bn=0.1):
         super(conv_large, self).__init__()
@@ -197,6 +205,7 @@ class conv_large(nn.Module):
     def forward(self, x, state = "test"):
         class_prob, joint_prob = forward_(self, x, state = state)
         return class_prob, joint_prob
+
 
 class small_joint_classifier(nn.Module):
     def __init__(self, config, in_ch=3, cnn_bias=True, mom_bn=0.1, bn_eps=10**-5, is_bn_aff=True, is_avg_pool=True):
@@ -245,6 +254,7 @@ class small_joint_classifier(nn.Module):
         if self.config['is_bn']:
             x = self.bns[3](x)
         return x
+
 
 class small_class_classifier(nn.Module):
     def __init__(self, config, in_ch=3, cnn_bias=True, mom_bn=0.1, bn_eps = 10**-5, is_bn_aff=True, is_avg_pool=True):
@@ -297,6 +307,7 @@ class small_class_classifier(nn.Module):
             x = self.bns[self.nb_layer](x)
         return x
 
+
 class small_encoder(nn.Module):
     def __init__(self, config, in_ch=3, cnn_bias=True, mom_bn=0.1, bn_eps=10**-5, is_bn_aff=True):
         super(small_encoder, self).__init__()
@@ -340,6 +351,7 @@ class small_encoder(nn.Module):
 
         x = self.mp2_2(x)
         return x
+
 
 class small_cnn(nn.Module):
     def __init__(self, config, in_ch=3, cnn_bias=True, mom_bn=0.1, is_avg_pool=True):
